@@ -1,4 +1,4 @@
-package crud.domain;
+package producerCrud.domain;
 
 import lombok.Builder;
 import lombok.Value;

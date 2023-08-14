@@ -1,7 +1,7 @@
-package crud.service;
+package producerCrud.service;
 
-import crud.domain.Producer;
-import crud.repository.ProducerRepository;
+import producerCrud.domain.Producer;
+import producerCrud.repository.ProducerRepository;
 
 import java.util.List;
 
@@ -24,9 +24,19 @@ public class ProducerService {
     public static List<Producer> findByName(String name){
         return ProducerRepository.findByName(name);
     }
+    public static void showProducerMetaData(){
+        ProducerRepository.showProducerMetaData();
+    }
+    public static void showDriverMetaData(){
+        ProducerRepository.showDriverMetaData();
+    }
 
-    private static void requireValidId(Integer id){
-        if (id ==null || id <=0){
+    public static void showTypeScrollWorking(){
+        ProducerRepository.showTypeScrollWorking();
+    }
+
+   private static void requireValidId(Integer id){
+        if (id == null || id <= 0){
             throw new IllegalArgumentException("Invalid value for id");
         }
     }
