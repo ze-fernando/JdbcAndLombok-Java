@@ -210,4 +210,53 @@ public class ProducerRepository {
         return Producer.builder().name(rs.getString("name")).id(rs.getInt("id"))
                 .build();
     }
+    public static List<Producer> findByNamePreparedStatement(String name){
+        List<Producer> producers = new ArrayList<>();
+        try (Connection con = ConnectionFactory.getConnection();
+             PreparedStatement ps = createPreparedStatement(con, name);
+             ResultSet rs = ps.executeQuery()){
+
+            while(rs.next()){
+                Producer producer = Producer.builder()
+                        .name(rs.getString("name"))
+                        .id(rs.getInt("id"))
+                        .build();
+                producers.add(producer);
+            }
+        } catch (SQLException e){
+            log.error("Error while trying to find producer", e);
+        }
+        return producers;
+    }
+
+    public static void updatePrepareStatement(Producer producer){
+        try (Connection con = ConnectionFactory.getConnection();
+             PreparedStatement ps = PreparedStatementUpdate(con, producer)){
+            int rowsAffect = ps.executeUpdate();
+            log.info("Updated producer '{}' in db rows affected {}",producer.getId() ,rowsAffect);
+        } catch (SQLException e){
+            log.error("Error while trying to update producer '{}' ", producer.getId(), e);
+        }
+    }
+    private static PreparedStatement createPreparedStatement(Connection con, String name)
+            throws SQLException {
+        String sql = "SELECT * FROM animeStore.producer WHERE name like ?;";
+
+        var ps = con.prepareStatement(sql);
+        ps.setString(1, name);
+        return ps;
+    }
+
+    private static PreparedStatement PreparedStatementUpdate(Connection con, Producer producer)
+            throws SQLException {
+        String sql = "UPDATE `animeStore`.`producer` SET `name` = ? WHERE (`id` = ?);";
+
+        var ps = con.prepareStatement(sql);
+        ps.setString(1, producer.getName());
+        ps.setInt(2, producer.getId());
+        return ps;
+    }
+
+
+
 }

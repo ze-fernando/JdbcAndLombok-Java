@@ -2,17 +2,20 @@ package producerCrud.conn.test;
 
 import lombok.extern.log4j.Log4j2;
 import producerCrud.domain.Producer;
+import producerCrud.service.ProducerService;
+
+import java.util.List;
 
 
 @Log4j2
 public class ConnectionFactoryTest01 {
     public static void main(String[] args){
         Producer producer = Producer.builder().name("Mad House").build();
-        Producer producerToUpdate = Producer.builder().id(1).name("MadHouse").build();
+        Producer producerToUpdate = Producer.builder().id(6).name("Bones").build();
         // ProducerService.save(producer);
         // ProducerService.delete(4);
         //ProducerService.update(producerToUpdate);
-        //List<Producer> producers = ProducerService.findAll();
+        List<Producer> producers = ProducerService.findAll();
         //List<Producer> producers = ProducerService.findByName("Mad");
         //log.info("Producers found '{}'", producers);
         //ProducerService.showProducerMetaData();
@@ -22,6 +25,9 @@ public class ConnectionFactoryTest01 {
         //log.info("Producers found '{}'", producers);
         //List<Producer> producers = ProducerService.findByNameAndInsertWhenNotFound("MADHOUSE");
         //ProducerService.findByNameAndDelete("A");
-        //log.info("Producers found '{}'", producers);
+        //List<Producer> producers = ProducerService.findByNamePreparedStatement("B or X'='X");
+        // ProducerService.updatePrepareStatement(producerToUpdate);
+
+        log.info("Producers found '{}'", producers);
     }
 }

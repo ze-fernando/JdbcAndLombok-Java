@@ -43,6 +43,12 @@ public class ProducerService {
     public static void findByNameAndDelete(String name){
         ProducerRepository.findByNameAndDelete(name);
     }
+    public static List<Producer> findByNamePreparedStatement(String name){
+        return ProducerRepository.findByNamePreparedStatement(name);
+    }
+    public static void updatePrepareStatement(Producer producer){
+        ProducerRepository.updatePrepareStatement(producer);
+    }
 
    private static void requireValidId(Integer id){
         if (id == null || id <= 0){
