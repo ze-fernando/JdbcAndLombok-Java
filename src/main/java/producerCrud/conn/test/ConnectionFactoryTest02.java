@@ -12,7 +12,7 @@ public class ConnectionFactoryTest02 {
     public static void main(String[] args) {
         Producer producerToUpdate = Producer.builder().id(6).name("BONES").build();
         ProducerServiceRowSet.UpdateJdbcRowSet(producerToUpdate);
-        log.info("-------------------------------------");
+        log.info("------------------------------------");
         List<Producer> producers = ProducerServiceRowSet.findByNameJdbcRowSet("");
         log.info(producers);
     }
