@@ -4,7 +4,9 @@ import producerCrud.conn.ConnectionFactory;
 import producerCrud.domain.Producer;
 import producerCrud.listener.CustomRowSetListener;
 
+import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.JdbcRowSet;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +34,6 @@ public class ProducerRepositoryRowSet {
         return producers;
 
     }
-
     public static void UpdateJdbcRowSet(Producer producer) {
         String sql = "SELECT * FROM animeStore.producer WHERE(`id` = ?);";
         try (JdbcRowSet jrs = ConnectionFactory.getJdbcRowSet()) {
@@ -46,6 +47,22 @@ public class ProducerRepositoryRowSet {
         } catch(SQLException e) {
             e.printStackTrace();
        }
+    }
+    public static void updateCachedRowSet(Producer producer) {
+        String sql = "SELECT * FROM producer WHERE(`id` = ?);";
+        try (CachedRowSet crs = ConnectionFactory.getCachedRowSet();
+        Connection connection = ConnectionFactory.getConnection()) {
+            connection.setAutoCommit(false);
+            crs.setCommand(sql);
+            crs.setInt(1, producer.getId());
+            crs.execute(connection);
+            if (!crs.next()) return;
+            crs.updateString("name", producer.getName());
+            crs.updateRow();
+            crs.acceptChanges();
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }

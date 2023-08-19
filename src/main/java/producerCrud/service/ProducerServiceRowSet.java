@@ -14,5 +14,8 @@ public class ProducerServiceRowSet {
     public static void UpdateJdbcRowSet(Producer producer) {
         ProducerRepositoryRowSet.UpdateJdbcRowSet(producer);
     }
+    public static void updateCachedRowSet(Producer producer) {
+        ProducerRepositoryRowSet.updateCachedRowSet(producer);
+    }
 
 }
