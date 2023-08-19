@@ -30,14 +30,6 @@ public class ConnectionFactory {
     }
 
     public static CachedRowSet getCachedRowSet() throws SQLException {
-        String url = "jdbc:mysql://localhost:3306/animeStore";
-        String username = "root";
-        String password = "root";
-        CachedRowSet cachedRowSet = RowSetProvider.newFactory().createCachedRowSet();
-        cachedRowSet.setUrl(url);
-        cachedRowSet.setUsername(username);
-        cachedRowSet.setPassword(password);
-
-        return cachedRowSet;
+        return RowSetProvider.newFactory().createCachedRowSet();
     }
 }
