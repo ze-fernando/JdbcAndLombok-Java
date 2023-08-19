@@ -22,6 +22,36 @@ public class ProducerRepository {
             log.error("Error while trying to insert producer '{}' ", producer.getName(), e);
         }
     }
+    public static void saveTransaction(List<Producer> producers){
+        try (Connection con = ConnectionFactory.getConnection()){
+            con.setAutoCommit(false);
+            saveTransactionPrepareStatement(con, producers);
+            con.commit();
+            con.setAutoCommit(true);
+        } catch (SQLException e){
+            log.error("Error while trying to update producer '{}' ", producers, e);
+        }
+    }
+    private static void saveTransactionPrepareStatement(Connection con, List<Producer> producers)
+            throws SQLException {
+        String sql = "INSERT INTO `animeStore`.`producer` (`name`) VALUES ( ? );";
+        boolean shoudRollback = false;
+        for (Producer p:producers) {
+            try (PreparedStatement ps = con.prepareStatement(sql)){
+                log.info("Saving producer '{}' ", p.getName());
+                ps.setString(1, p.getName());
+                ps.execute();
+            } catch (SQLException e){
+                e.printStackTrace();
+                shoudRollback = true;
+            }
+        }
+        if (shoudRollback){
+            log.warn("Transaction is going be rollback");
+            con.rollback();
+        }
+    }
+
     public static void delete(int id){
         String sql = "DELETE FROM `animeStore`.`producer` WHERE (`id` = '%d');".formatted(id);
         try (Connection con = ConnectionFactory.getConnection();
@@ -229,15 +259,6 @@ public class ProducerRepository {
         return producers;
     }
 
-    public static void updatePrepareStatement(Producer producer){
-        try (Connection con = ConnectionFactory.getConnection();
-             PreparedStatement ps = PreparedStatementUpdate(con, producer)){
-            int rowsAffect = ps.executeUpdate();
-            log.info("Updated producer '{}' in db rows affected {}",producer.getId() ,rowsAffect);
-        } catch (SQLException e){
-            log.error("Error while trying to update producer '{}' ", producer.getId(), e);
-        }
-    }
     private static PreparedStatement createPreparedStatement(Connection con, String name)
             throws SQLException {
         String sql = "SELECT * FROM animeStore.producer WHERE name like ?;";
@@ -247,7 +268,26 @@ public class ProducerRepository {
         return ps;
     }
 
+    public static void updatePrepareStatement(Producer producer){
+        try (Connection con = ConnectionFactory.getConnection();
+             PreparedStatement ps = PreparedStatementUpdate(con, producer)){
+            int rowsAffect = ps.executeUpdate();
+            log.info("Updated producer '{}' in db rows affected {}",producer.getId() ,rowsAffect);
+        } catch (SQLException e){
+            log.error("Error while trying to update producer '{}' ", producer.getId(), e);
+        }
+    }
     private static PreparedStatement PreparedStatementUpdate(Connection con, Producer producer)
+            throws SQLException {
+        String sql = "UPDATE `animeStore`.`producer` SET `name` = ? WHERE (`id` = ?);";
+
+        var ps = con.prepareStatement(sql);
+        ps.setString(1, producer.getName());
+        ps.setInt(2, producer.getId());
+        return ps;
+    }
+
+    private static PreparedStatement PreparedStatement(Connection con, Producer producer)
             throws SQLException {
         String sql = "UPDATE `animeStore`.`producer` SET `name` = ? WHERE (`id` = ?);";
 
